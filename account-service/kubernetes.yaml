@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: account-service
+  namespace: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: account-service
+  template:
+    metadata:
+      labels:
+        app: account-service
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: account-service
+          image: anhdai0801/blog-account-service:latest
+          imagePullPolicy: Always
+          env:
+            - name: PORT
+              value: "8080"
+            - name: GRPC_PORT
+              value: "6565"
+            - name: CLOUD_CONFIG_URL
+              value: "http://cloud-config:8080"
+          ports:
+            - containerPort: 8080
+            - containerPort: 6565
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: account-service
+  namespace: dev
+spec:
+  type: ClusterIP
+  selector:
+    app: account-service
+  ports:
+    - name: grpc
+      port: 6565
+      targetPort: 6565

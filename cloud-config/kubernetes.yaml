@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloud-config
+  namespace: dev
+spec:
+  selector:
+    matchLabels:
+      app: cloud-config
+  template:
+    metadata:
+      labels:
+        app: cloud-config
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: cloud-config
+          image: anhdai0801/blog-cloud-config:latest
+          imagePullPolicy: Always
+          env:
+            - name: PORT
+              value: "8080"
+            - name: DB_URL
+              value: jdbc:postgresql://dpg-cjre8bdhe99c73ed6h40-a.singapore-postgres.render.com/appconfig
+            - name: DB_SCHEMA
+              value: appconfig
+            - name: DB_USERNAME
+              value: anhdai
+            - name: DB_PASSWORD
+              value: jhiIBahhpqYCYgyTDq1Hylzj3koGiDBd
+          ports:
+            - containerPort: 8080
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cloud-config
+  namespace: dev
+spec:
+  type: ClusterIP
+  selector:
+    app: cloud-config
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080

@@ -6,7 +6,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: "myblog.com"
+  - host: "api.myblog.com"
     http:
       paths:
         - pathType: Prefix
@@ -16,3 +16,13 @@ spec:
               name: gateway-service
               port:
                 number: 8080
+  - host: "myblog.com"
+    http:
+      paths:
+        - pathType: Prefix
+          path: "/"
+          backend:
+            service:
+              name: blog-app
+              port:
+                number: 80
